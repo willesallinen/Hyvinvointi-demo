@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 import hashlib
 
+# Määritellään sivun asetukset
 st.set_page_config(page_title="Hyvinvointikysely", page_icon="💚", layout="centered")
 
 # Väriteema ja napit
@@ -76,4 +77,40 @@ def main():
             st.session_state.stage = "bad"
 
     elif stage == "good":
-        st.success("Mahtava kuulla,
+        st.success("Mahtava kuulla, Kiitos että vastasit! 💚")
+        # Tässä kohtaa voit lisätä sähköpostin lähetyksen halutessasi
+
+    elif stage == "bad":
+        st.header("Kerro mihin ongelmasi liittyy?")
+        if st.button("Työilmapiiri"):
+            st.session_state.stage = "bad_atmosphere"
+        elif st.button("Työympäristö"):
+            st.session_state.stage = "bad_environment"
+
+    elif stage == "bad_atmosphere":
+        st.subheader("Työilmapiiri")
+        if st.button("Esihenkilö"):
+            st.session_state.stage = "form_input_atmo_manager"
+        elif st.button("Jokin muu"):
+            st.session_state.stage = "form_input_atmo_other"
+
+    elif stage == "bad_environment":
+        st.subheader("Työympäristö")
+        if st.button("Oma työpiste"):
+            st.session_state.stage = "form_input_env_desk"
+        elif st.button("Jokin muu"):
+            st.session_state.stage = "form_input_env_other"
+
+    elif "form_input" in stage:
+        st.subheader("Kuvaile ongelmaasi (max 500 merkkiä)")
+        msg = st.text_area("Kirjoita viesti", max_chars=500)
+        if st.button("Lähetä"):
+            st.success("Kiitos vastauksestasi!")
+            # Lisää sähköpostin lähetys tänne halutessasi
+            st.session_state.stage = "done"
+
+    elif stage == "done":
+        st.success("Vastauksesi on vastaanotettu.")
+
+if __name__ == "__main__":
+    main()
